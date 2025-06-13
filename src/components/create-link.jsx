@@ -65,25 +65,49 @@ export function CreateLink() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error, data]);
 
+  // const createNewLink = async () => {
+  //   setErrors([]);
+  //   try {
+  //     await schema.validate(formValues, {abortEarly: false});
+
+  //     const canvas = ref.current.canvasRef.current;
+  //     const blob = await new Promise((resolve) => canvas.toBlob(resolve));
+
+  //     await fnCreateUrl(blob);
+  //   } catch (e) {
+  //     const newErrors = {};
+
+  //     e?.inner?.forEach((err) => {
+  //       newErrors[err.path] = err.message;
+  //     });
+
+  //     setErrors(newErrors);
+  //   }
+  // };
   const createNewLink = async () => {
-    setErrors([]);
-    try {
-      await schema.validate(formValues, {abortEarly: false});
+  setErrors({});
+  try {
+    await schema.validate(formValues, { abortEarly: false });
 
+    let blob = null;
+
+    // Only attempt to get QR code if longUrl exists and QR is rendered
+    if (ref.current?.canvasRef?.current) {
       const canvas = ref.current.canvasRef.current;
-      const blob = await new Promise((resolve) => canvas.toBlob(resolve));
-
-      await fnCreateUrl(blob);
-    } catch (e) {
-      const newErrors = {};
-
-      e?.inner?.forEach((err) => {
-        newErrors[err.path] = err.message;
-      });
-
-      setErrors(newErrors);
+      blob = await new Promise((resolve) => canvas.toBlob(resolve));
     }
-  };
+
+    await fnCreateUrl(blob);
+  } catch (e) {
+    const newErrors = {};
+
+    e?.inner?.forEach((err) => {
+      newErrors[err.path] = err.message;
+    });
+
+    setErrors(newErrors);
+  }
+};
 
   return (
     <Dialog
@@ -141,3 +165,149 @@ export function CreateLink() {
     </Dialog>
   );
 }
+// import { Button } from "@/components/ui/button";
+// import {
+//   Dialog,
+//   DialogContent,
+//   DialogFooter,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogTrigger,
+// } from "@/components/ui/dialog";
+// import { Input } from "@/components/ui/input";
+// import { Card } from "./ui/card";
+// import { useNavigate, useSearchParams } from "react-router-dom";
+// import { useEffect, useRef, useState } from "react";
+// import Error from "./error";
+// import * as yup from "yup";
+// import { createUrl } from "@/db/apiUrls";
+// import { BeatLoader } from "react-spinners";
+// import { UrlState } from "@/context";
+// import { QRCode } from "react-qrcode-logo";
+// import { toast } from "sonner";
+
+// export function CreateLink() {
+//   const { user } = UrlState();
+//   const navigate = useNavigate();
+//   const ref = useRef();
+//   const [searchParams, setSearchParams] = useSearchParams();
+//   const longLink = searchParams.get("createNew");
+
+//   const [loading, setLoading] = useState(false);
+//   const [errors, setErrors] = useState({});
+//   const [formValues, setFormValues] = useState({
+//     title: "",
+//     longUrl: longLink ? longLink : "",
+//     customUrl: "",
+//   });
+
+//   const schema = yup.object().shape({
+//     title: yup.string().required("Title is required"),
+//     longUrl: yup
+//       .string()
+//       .url("Must be a valid URL")
+//       .required("Long URL is required"),
+//     customUrl: yup.string(),
+//   });
+
+//   const handleChange = (e) => {
+//     setFormValues({
+//       ...formValues,
+//       [e.target.id]: e.target.value,
+//     });
+//   };
+
+//   const createNewLink = async () => {
+//     setErrors({});
+//     setLoading(true);
+//     try {
+//       // Validate form values
+//       await schema.validate(formValues, { abortEarly: false });
+
+//       // Generate QR code image from canvas
+//       const canvas = ref.current.canvasRef.current;
+//       const blob = await new Promise((resolve) => canvas.toBlob(resolve));
+
+//       // Call the createUrl API
+//       const result = await createUrl({ ...formValues, user_id: user.id }, blob);
+
+//       // Show success toast
+//       toast.success("Short link created!");
+
+//       // Redirect to the newly created link's page
+//       navigate(`/link/${result[0].id}`);
+//     } catch (e) {
+//       // Handle Yup validation errors
+//       if (e?.inner) {
+//         const newErrors = {};
+//         e.inner.forEach((err) => {
+//           newErrors[err.path] = err.message;
+//         });
+//         setErrors(newErrors);
+//       } else {
+//         toast.error(e.message || "An error occurred while creating the link.");
+//       }
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <Dialog
+//       defaultOpen={longLink}
+//       onOpenChange={(res) => {
+//         if (!res) setSearchParams({});
+//       }}
+//     >
+//       <DialogTrigger asChild>
+//         <Button variant="destructive">Create New Link</Button>
+//       </DialogTrigger>
+//       <DialogContent className="sm:max-w-md">
+//         <DialogHeader>
+//           <DialogTitle className="font-bold text-2xl">Create New</DialogTitle>
+//         </DialogHeader>
+
+//         {formValues?.longUrl && (
+//           <QRCode ref={ref} size={250} value={formValues?.longUrl} />
+//         )}
+
+//         <Input
+//           id="title"
+//           placeholder="Short Link's Title"
+//           value={formValues.title}
+//           onChange={handleChange}
+//         />
+//         {errors.title && <Error message={errors.title} />}
+
+//         <Input
+//           id="longUrl"
+//           placeholder="Enter your Loooong URL"
+//           value={formValues.longUrl}
+//           onChange={handleChange}
+//         />
+//         {errors.longUrl && <Error message={errors.longUrl} />}
+
+//         <div className="flex items-center gap-2">
+//           <Card className="p-2">trimrr.in</Card> /
+//           <Input
+//             id="customUrl"
+//             placeholder="Custom Link (optional)"
+//             value={formValues.customUrl}
+//             onChange={handleChange}
+//           />
+//         </div>
+
+//         <DialogFooter className="sm:justify-start">
+//           <Button
+//             type="button"
+//             variant="destructive"
+//             onClick={createNewLink}
+//             disabled={loading}
+//           >
+//             {loading ? <BeatLoader size={10} color="white" /> : "Create"}
+//           </Button>
+//         </DialogFooter>
+//       </DialogContent>
+//     </Dialog>
+//   );
+// }

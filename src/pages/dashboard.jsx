@@ -40,9 +40,6 @@ const Dashboard = () => {
   useEffect(() => {
     if (urls?.length) fnClicks();
   }, [urls?.length]);
-   
-  console.log("URL IDs", urls?.map((url) => url.id));
-console.log("Clicks", clicks);
 
   return (
     <div className="flex flex-col gap-8">

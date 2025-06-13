@@ -34,11 +34,11 @@ const parser = new UAParser();
 
 // export const storeClicks = async ({ id, originalUrl }) => {
 //   try {
-//     console.log("📦 storeClicks called with id:", id);
+//     console.log("storeClicks called with id:", id);
 
 //     const result = parser.getResult();
 //     const device = result.device?.type || "desktop";
-//     console.log("📱 Device:", device);
+//     console.log(" Device:", device);
 
 //     let city = "Unknown";
 //     let country = "Unknown";
@@ -48,9 +48,9 @@ const parser = new UAParser();
 //       const data = await response.json();
 //       city = data.city;
 //       country = data.country_name;
-//       console.log("🌍 Location:", city, country);
+//       console.log(" Location:", city, country);
 //     } catch (err) {
-//       console.error("❌ IP API failed:", err);
+//       console.error(" IP API failed:", err);
 //     }
 
 //     const { data, error } = await supabase.from("clicks").insert({
@@ -61,36 +61,37 @@ const parser = new UAParser();
 //     });
 
 //     if (error) {
-//       console.error("❌ Supabase insert error:", error);
+//       console.error(" Supabase insert error:", error);
 //     } else {
-//       console.log("✅ Click stored:", data);
+//       console.log(" Click stored:", data);
 //     }
 
 //     // Always redirect
 //     window.location.href = originalUrl;
 //   } catch (error) {
-//     console.error("❌ storeClicks failed:", error);
+//     console.error("storeClicks failed:", error);
 //   }
 // };
 export const storeClicks = async ({ id, originalUrl }) => {
   try {
-    console.log("📦 storeClicks called with id:", id);
+    console.log(" storeClicks called with id:", id);
 
     const result = parser.getResult();
     const device = result.device?.type || "desktop";
-    console.log("📱 Device:", device);
+    console.log(" Device:", device);
 
     let city = "Unknown";
     let country = "Unknown";
 
     try {
-      const response = await fetch("https://ipapi.co/json");
+      const response = await fetch(" https://ipapi.co/json");
+     
       const data = await response.json();
       city = data.city;
       country = data.country_name;
       console.log("🌍 Location:", city, country);
     } catch (err) {
-      console.error("❌ IP API failed:", err);
+      console.error("IP API failed:", err);
     }
 
     const { data, error } = await supabase.from("clicks").insert({
@@ -101,9 +102,9 @@ export const storeClicks = async ({ id, originalUrl }) => {
     });
 
     if (error) {
-      console.error("❌ Supabase insert error:", error);
+      console.error(" Supabase insert error:", error);
     } else {
-      console.log("✅ Click stored:", data);
+      console.log("Click stored:", data);
     }
 
     // ✅ Delay redirect by 300ms to make sure it stores first
@@ -111,6 +112,6 @@ export const storeClicks = async ({ id, originalUrl }) => {
       window.location.href = originalUrl;
     }, 300);
   } catch (error) {
-    console.error("❌ storeClicks failed:", error);
+    console.error("storeClicks failed:", error);
   }
 };
