@@ -29,15 +29,19 @@ const LinkCard = ({url = [], fetchUrls}) => {
   };
      console.log("LinkCard URL Data:", url);
   const {loading: loadingDelete, fn: fnDelete} = useFetch(deleteUrl, url.id);
-
-  return (
+ 
+    const handleUrlClick = (event) => {
+    event.preventDefault(); 
+    console.log(`URL Clicked: https://trimrr.in/${url?.custom_url ? url?.custom_url : url.short_url}`);
+  };
+  return ( 
     <div className="flex flex-col md:flex-row gap-5 border p-4 bg-gray-900 rounded-lg">
       <img
         src={url?.qr}
         className="h-32 object-contain ring ring-blue-500 self-start"
         alt="qr code"
       />
-      <Link to={`/link/${url?.id}`} className="flex flex-col flex-1">
+      <Link to={`/link/${url?.id}`} className="flex flex-col flex-1" >
         <span className="text-3xl font-extrabold hover:underline cursor-pointer">
           {url?.title}
         </span>
