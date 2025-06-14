@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import {Copy, Download, LinkIcon, Trash} from "lucide-react";
 import {Link} from "react-router-dom";
 import {Button} from "./ui/button";
@@ -9,20 +9,19 @@ import {BeatLoader} from "react-spinners";
 const LinkCard = ({url = [], fetchUrls}) => {
   const downloadImage = () => {
     const imageUrl = url?.qr;
-    const fileName = url?.title; // Desired file name for the downloaded image
+    const fileName = url?.title; 
 
-    // Create an anchor element
+   
     const anchor = document.createElement("a");
     anchor.href = imageUrl;
     anchor.download = fileName;
 
-    // Append the anchor to the body
     document.body.appendChild(anchor);
 
-    // Trigger the download by simulating a click event
+    
     anchor.click();
 
-    // Remove the anchor from the document
+
     document.body.removeChild(anchor);
   
 
@@ -32,7 +31,7 @@ const LinkCard = ({url = [], fetchUrls}) => {
  
     const handleUrlClick = (event) => {
     event.preventDefault(); 
-    console.log(`URL Clicked: https://trimrr.in/${url?.custom_url ? url?.custom_url : url.short_url}`);
+    console.log(`URL Clicked: https://localhost:5173//${url?.custom_url ? url?.custom_url : url.short_url}`);
   };
   return ( 
     <div className="flex flex-col md:flex-row gap-5 border p-4 bg-gray-900 rounded-lg">
@@ -46,7 +45,7 @@ const LinkCard = ({url = [], fetchUrls}) => {
           {url?.title}
         </span>
         <span className="text-2xl text-blue-400 font-bold hover:underline cursor-pointer">
-          https://trimrr.in/{url?.custom_url ? url?.custom_url : url.short_url}
+           http://localhost:5173/{url?.custom_url ? url?.custom_url : url.short_url}
         </span>
         <span className="flex items-center gap-1 hover:underline cursor-pointer">
           <LinkIcon className="p-1" />
@@ -60,7 +59,7 @@ const LinkCard = ({url = [], fetchUrls}) => {
         <Button
           variant="ghost"
           onClick={() =>
-            navigator.clipboard.writeText(`https://trimrr.in/${url?.short_url}`)
+            navigator.clipboard.writeText(`https://localhost:5173//${url?.short_url}`)
           }
         >
           <Copy />
